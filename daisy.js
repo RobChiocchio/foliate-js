@@ -23,19 +23,25 @@ const MIME = {
 
 const DOCTYPE = 'http://openebook.org/dtds/oeb-1.2/oebpkg12.dtd'
 
-export const isDAISY = async loader => {
-    const { entries } = loader
-    const entry = entries.find(entry => entry.filename.endsWith('.opf'))
-    const text = await loader.loadText((entry ?? entries[0]).filename)
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(text, MIME.XML)
+export const isDAISY = async (loader, file) => {
+    if (file.type === 'application/zip' && file.name.endsWith('.zip')) {
+        const { entries } = loader
+        const entry = entries.find(entry => entry.filename.endsWith('.opf'))
+        if (!entry) return false
 
-    console.log(`doctypeObj.name: ${doc.doctype.name}`);
-    console.log(`doctypeObj.internalSubset: ${doc.doctype.internalSubset}`);
-    console.log(`doctypeObj.publicId: ${doc.doctype.publicId}`);
-    console.log(`doctypeObj.systemId: ${doc.doctype.systemId}`);
+        const text = await loader.loadText((entry ?? entries[0]).filename)
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(text, MIME.XML)
 
-    return doc.doctype.systemId == DOCTYPE
+        // console.log(`doctypeObj.name: ${doc.doctype.name}`);
+        // console.log(`doctypeObj.internalSubset: ${doc.doctype.internalSubset}`);
+        // console.log(`doctypeObj.publicId: ${doc.doctype.publicId}`);
+        // console.log(`doctypeObj.systemId: ${doc.doctype.systemId}`);
+
+        return doc.doctype.systemId === DOCTYPE
+    }
+
+    return false
 }
 
 export class DAISY {
