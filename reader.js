@@ -84,7 +84,7 @@ const getView = async file => {
             book = await makeFB2(blob)
         } else {
             const { isDAISY, DAISY } = await import('./daisy.js')
-            if (await isDAISY(loader)) {
+            if (await isDAISY(loader, file)) {
                 book = await new DAISY(loader).init()
             } else {
                 const { EPUB } = await import('./epub.js')
